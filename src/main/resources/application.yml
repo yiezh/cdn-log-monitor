@@ -1,0 +1,64 @@
+server:
+  port: 8080
+  tomcat:
+    accesslog:
+      buffered: true
+      directory: logs
+      enabled: false
+      file-date-format: .yyyy-MM-dd
+      pattern: common
+      prefix: access_log
+      rename-on-rotate: false
+      request-attributes-enabled: false
+      rotate: true
+      suffix: .log
+    basedir: ${logging.path}/${spring.application.name}/${server.port}
+spring:
+  application:
+    name: log-monitor
+  kafka:
+    bootstrap-servers: 192.168.101.210:9092
+    consumer:
+      group-id: log-monitor-test1
+      enable-auto-commit: true
+      fetch-min-size: 5000000
+      fetch-max-wait: 200ms
+      max-poll-records: 100000
+      auto-commit-interval: 1000ms
+  datasource:
+    driver-class-name: com.mysql.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/log-monitor?useUnicode=true&characterEncoding=utf-8&useSSL=false&allowPublicKeyRetrieval=true
+    username: root
+    password: root
+    hikari:
+      max-lifetime: 1800000
+      connection-timeout: 30000
+      maximum-pool-size: 20
+      idle-timeout: 600000
+      connection-test-query: SELECT 1
+  jpa:
+    database-platform: org.hibernate.dialect.MySQL5InnoDBDialect
+    show-sql: true
+    open-in-view: true
+    hibernate:
+      ddl-auto: update
+      naming:
+        physical-strategy: org.springframework.boot.orm.jpa.hibernate.SpringPhysicalNamingStrategy
+management:
+  endpoints:
+    web:
+      base-path: /ipanel
+      exposure:
+        include: ["health", "info", "prometheus"]
+  endpoint:
+    health:
+      show-details: always
+    shutdown:
+      enabled: false
+    prometheus:
+      enabled: true
+logging:
+  path: /Users/luzhihao/tmp/logs
+  level:
+    root: info
+    com.ipanel: debug
